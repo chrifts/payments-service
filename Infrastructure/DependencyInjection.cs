@@ -11,7 +11,7 @@ public static class DependencyInjection
         IConfiguration configuration
     )
     {
-        var connectionString = configuration.GetConnectionString("Default")!;
+        var connectionString = configuration.GetConnectionString("PaymentsDb")!;
         services.AddDbContext<PaymentsDbContext>(options =>
             options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
         );
