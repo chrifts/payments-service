@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Serilog;
 
 namespace Infrastructure;
@@ -12,7 +13,7 @@ public static class DependencyInjection
         IConfiguration configuration
     )
     {
-        AddSerilog(services);
+        AddSerilog(services, configuration);
         AddDatabase(services, configuration);
 
         return services;
@@ -26,13 +27,18 @@ public static class DependencyInjection
         );
     }
 
-    private static void AddSerilog(IServiceCollection services)
+    private static void AddSerilog(IServiceCollection services, IConfiguration configuration)
     {
         Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(configuration)
             .WriteTo.Console()
+            .WriteTo.File("logs/log-.log", rollingInterval: RollingInterval.Day)
             .CreateLogger();
 
-        services.AddSerilog();
+        services.AddLogging(builder =>
+        {
+            builder.ClearProviders();
+            builder.AddSerilog();
+        });
     }
-
 }
