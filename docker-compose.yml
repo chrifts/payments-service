@@ -4,7 +4,6 @@ services:
     container_name: payments-mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_USER: root
     ports:
       - "${MYSQL_HOST_PORT}:3306"
     volumes:
