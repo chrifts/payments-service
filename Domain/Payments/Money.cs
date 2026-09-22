@@ -2,5 +2,14 @@ namespace Domain.Payments;
 
 public record Money
 {
-    public decimal Amount { get; init; }
+    private readonly decimal _amount;
+    public decimal Amount
+    {
+        get => _amount;
+        init
+        {
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value);
+            _amount = value;
+        }
+    }
 }

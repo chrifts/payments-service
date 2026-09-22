@@ -1,7 +1,6 @@
 using Domain.Payments;
 using Domain.Payments.Events;
 using Domain.Payments.PaymentMethods;
-using Domain.Shared.Events;
 
 namespace Tests.Unit.Domain.Payments;
 
@@ -67,7 +66,7 @@ public class PaymentTest
     [Fact]
     public void Pay_WhenAlreadyPaid_DoesNotRaiseAnotherEvent()
     {
-        // Given        
+        // Given
         // When
         payment.Pay();
         payment.Pay();
