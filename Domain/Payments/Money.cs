@@ -12,4 +12,5 @@ public record Money
             _amount = value;
         }
     }
+    public required Currency Currency { get; init; }
 }

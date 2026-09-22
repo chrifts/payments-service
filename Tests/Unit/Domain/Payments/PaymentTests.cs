@@ -12,7 +12,7 @@ public class PaymentTest
 
     public PaymentTest()
     {
-        money = new() { Amount = 2134 };
+        money = new() { Amount = 2134, Currency = new Currency("BTC", 8) };
         method = new CashPayment();
         payment = new(money, method);
     }

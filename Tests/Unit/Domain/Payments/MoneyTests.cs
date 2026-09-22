@@ -12,6 +12,10 @@ public class MoneyTests
         // Given
         // When
         // Then
-        Assert.Throws<ArgumentOutOfRangeException>(() => new Money { Amount = amount });
+        Assert.Throws<ArgumentOutOfRangeException>(() => new Money
+        {
+            Amount = amount,
+            Currency = new Currency("USD", 2)
+        });
     }
 }
