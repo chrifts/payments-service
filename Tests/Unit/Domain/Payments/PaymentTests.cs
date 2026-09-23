@@ -1,4 +1,5 @@
 using Domain.Payments;
+using Domain.Payments.Exceptions;
 using Domain.Payments.Events;
 using Domain.Payments.PaymentMethods;
 
@@ -13,7 +14,7 @@ public class PaymentTest
     public PaymentTest()
     {
         money = new() { Amount = 2134, Currency = new Currency("BTC", 8) };
-        method = new CashPayment();
+        method = new CashPayment(money);
         payment = new(money, method);
     }
 
@@ -74,5 +75,23 @@ public class PaymentTest
         // Then
         Assert.Single(payment.Events);
         Assert.IsType<PaymentPaidEvent>(payment.Events[0]);
+    }
+
+    [Fact]
+    public void Pay_WithInsufficientTendered_Throws()
+    {
+        // Given
+        Currency currency = new("BTC", 8);
+
+        Money toPay = new() { Amount = 2134, Currency = currency };
+        Money tendered = new() { Amount = 1, Currency = currency };
+
+        CashPayment method = new(tendered);
+        Payment cashPayment = new(toPay, method);
+
+        // When / Then
+        Assert.Throws<InsufficientTenderedAmountException>(cashPayment.Pay);
+        Assert.False(cashPayment.IsPaid());
+        Assert.Empty(cashPayment.Events);
     }
 }

@@ -18,6 +18,9 @@ public class Payment(Money amount, PaymentMethod method)
         {
             return;
         }
+
+        Method.EnsureCanPay(Amount);
+
         Paid = true;
         _events.Add(new PaymentPaidEvent());
     }
