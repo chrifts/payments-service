@@ -13,4 +13,18 @@ public record Money
         }
     }
     public required Currency Currency { get; init; }
+
+    public bool GreaterOrEqualTo(Money money)
+    {
+        EnsureSameCurrency(money.Currency);
+        return Amount >= money.Amount;
+    }
+    
+    private void EnsureSameCurrency(Currency currency)
+    {
+        if (currency != Currency)
+        {
+            throw new ArgumentException("Currency mismatch", nameof(currency));
+        }
+    }
 }
