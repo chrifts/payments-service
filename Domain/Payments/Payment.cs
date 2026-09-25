@@ -6,28 +6,23 @@ namespace Domain.Payments;
 
 public class Payment(Money amount, PaymentMethod method)
 {
-    public readonly Money Amount = amount;
-    public readonly PaymentMethod Method = method;
-    private bool Paid = false;
+    public Money Amount { get; } = amount;
+    public PaymentMethod Method { get; } = method;
+    public bool IsPaid { get; private set; }
     private readonly List<IDomainEvent> _events = [];
     public IReadOnlyList<IDomainEvent> Events => _events;
 
     public void Pay()
     {
-        if (IsPaid())
+        if (IsPaid)
         {
             return;
         }
 
         Method.EnsureCanPay(Amount);
 
-        Paid = true;
+        IsPaid = true;
         _events.Add(new PaymentPaidEvent());
-    }
-
-    public bool IsPaid()
-    {
-        return Paid;
     }
 
     public void ClearEvents()

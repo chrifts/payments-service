@@ -36,7 +36,7 @@ public class PaymentTest
         payment.Pay();
 
         // Then
-        Assert.True(payment.IsPaid());
+        Assert.True(payment.IsPaid);
     }
 
     [Fact]
@@ -91,7 +91,7 @@ public class PaymentTest
 
         // When / Then
         Assert.Throws<InsufficientTenderedAmountException>(cashPayment.Pay);
-        Assert.False(cashPayment.IsPaid());
+        Assert.False(cashPayment.IsPaid);
         Assert.Empty(cashPayment.Events);
     }
 }

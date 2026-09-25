@@ -4,7 +4,7 @@ namespace Domain.Payments.PaymentMethods;
 
 public sealed class CashPayment(Money tendered) : PaymentMethod
 {
-    public readonly Money Tendered = tendered;
+    public Money Tendered { get; } = tendered;
 
     public override void EnsureCanPay(Money amountDue)
     {
