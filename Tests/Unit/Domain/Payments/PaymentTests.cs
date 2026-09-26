@@ -2,6 +2,7 @@ using Domain.Payments;
 using Domain.Payments.Exceptions;
 using Domain.Payments.Events;
 using Domain.Payments.PaymentMethods;
+using Microsoft.Extensions.Time.Testing;
 
 namespace Tests.Unit.Domain.Payments;
 
@@ -10,12 +11,16 @@ public class PaymentTest
     readonly Money money;
     readonly PaymentMethod method;
     readonly Payment payment;
+    readonly FakeTimeProvider fakeTimeProvider;
+    readonly DateTimeOffset createdAt;
 
     public PaymentTest()
     {
         money = new() { Amount = 2134, Currency = new Currency("BTC", 8) };
         method = new CashPayment(money);
-        payment = Payment.Create(money, method);
+        createdAt = new(2026, 9, 26, 12, 0, 0, TimeSpan.Zero);
+        fakeTimeProvider = new FakeTimeProvider(createdAt);
+        payment = Payment.Create(money, method, fakeTimeProvider);
     }
 
     [Fact]
@@ -33,7 +38,7 @@ public class PaymentTest
     {
         // Given
         // When
-        payment.Pay();
+        payment.Pay(fakeTimeProvider);
 
         // Then
         Assert.True(payment.IsPaid);
@@ -44,7 +49,7 @@ public class PaymentTest
     {
         // Given
         // When
-        payment.Pay();
+        payment.Pay(fakeTimeProvider);
 
         // Then
         Assert.Single(payment.Events.OfType<PaymentPaidEvent>());
@@ -54,7 +59,7 @@ public class PaymentTest
     public void ClearEvents_RemovesAllEvents()
     {
         // Given
-        payment.Pay();
+        payment.Pay(fakeTimeProvider);
 
         // When
         payment.ClearEvents();
@@ -68,8 +73,8 @@ public class PaymentTest
     {
         // Given
         // When
-        payment.Pay();
-        payment.Pay();
+        payment.Pay(fakeTimeProvider);
+        payment.Pay(fakeTimeProvider);
 
         // Then
         Assert.Single(payment.Events.OfType<PaymentPaidEvent>());
@@ -85,10 +90,10 @@ public class PaymentTest
         Money tendered = new() { Amount = 1, Currency = currency };
 
         CashPayment method = new(tendered);
-        Payment cashPayment = Payment.Create(toPay, method);
+        Payment cashPayment = Payment.Create(toPay, method, fakeTimeProvider);
 
         // When / Then
-        Assert.Throws<InsufficientTenderedAmountException>(cashPayment.Pay);
+        Assert.Throws<InsufficientTenderedAmountException>(() => cashPayment.Pay(fakeTimeProvider));
         Assert.False(cashPayment.IsPaid);
         Assert.Empty(cashPayment.Events.OfType<PaymentPaidEvent>());
     }
@@ -98,7 +103,7 @@ public class PaymentTest
     {
         // Given
         // When
-        Payment otherPayment = Payment.Create(money, method);
+        Payment otherPayment = Payment.Create(money, method, fakeTimeProvider);
 
         // Then
         Assert.NotEqual(payment.Id, otherPayment.Id);
@@ -111,5 +116,27 @@ public class PaymentTest
         // When
         // Then
         Assert.Single(payment.Events.OfType<PaymentCreatedEvent>());
+    }
+
+    [Fact]
+    public void Create_SetsCreatedAt()
+    {
+        // Given
+        // When
+        // Then
+        Assert.Equal(createdAt, payment.CreatedAt);
+    }
+
+    [Fact]
+    public void Pay_SetsPaidAt()
+    {
+        // Given
+        fakeTimeProvider.Advance(TimeSpan.FromMinutes(10));
+
+        // When
+        payment.Pay(fakeTimeProvider);
+
+        // Then
+        Assert.Equal(createdAt.AddMinutes(10), payment.PaidAt);
     }
 }

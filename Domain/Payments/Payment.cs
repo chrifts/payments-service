@@ -10,16 +10,19 @@ public class Payment
     public Money Amount { get; }
     public PaymentMethod Method { get; }
     public bool IsPaid { get; private set; }
+    public DateTimeOffset CreatedAt { get; }
+    public DateTimeOffset? PaidAt { get; private set; }
     private readonly List<IDomainEvent> _events = [];
     public IReadOnlyList<IDomainEvent> Events => _events;
 
-    private Payment(Money amount, PaymentMethod method)
+    private Payment(Money amount, PaymentMethod method, DateTimeOffset createdAt)
     {
         Amount = amount;
         Method = method;
+        CreatedAt = createdAt;
     }
 
-    public void Pay()
+    public void Pay(TimeProvider timeProvider)
     {
         if (IsPaid)
         {
@@ -29,6 +32,8 @@ public class Payment
         Method.EnsureCanPay(Amount);
 
         IsPaid = true;
+        PaidAt = timeProvider.GetUtcNow();
+
         _events.Add(new PaymentPaidEvent());
     }
 
@@ -37,9 +42,9 @@ public class Payment
         _events.Clear();
     }
 
-    public static Payment Create(Money amount, PaymentMethod method)
+    public static Payment Create(Money amount, PaymentMethod method, TimeProvider timeProvider)
     {
-        Payment payment = new(amount, method);
+        Payment payment = new(amount, method, timeProvider.GetUtcNow());
         payment._events.Add(new PaymentCreatedEvent());
         return payment;
     }
