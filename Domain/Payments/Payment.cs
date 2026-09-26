@@ -4,14 +4,20 @@ using Domain.Shared.Events;
 
 namespace Domain.Payments;
 
-public class Payment(Money amount, PaymentMethod method)
+public class Payment
 {
     public PaymentId Id { get; } = PaymentId.New();
-    public Money Amount { get; } = amount;
-    public PaymentMethod Method { get; } = method;
+    public Money Amount { get; }
+    public PaymentMethod Method { get; }
     public bool IsPaid { get; private set; }
     private readonly List<IDomainEvent> _events = [];
     public IReadOnlyList<IDomainEvent> Events => _events;
+
+    private Payment(Money amount, PaymentMethod method)
+    {
+        Amount = amount;
+        Method = method;
+    }
 
     public void Pay()
     {
@@ -29,5 +35,12 @@ public class Payment(Money amount, PaymentMethod method)
     public void ClearEvents()
     {
         _events.Clear();
+    }
+
+    public static Payment Create(Money amount, PaymentMethod method)
+    {
+        Payment payment = new(amount, method);
+        payment._events.Add(new PaymentCreatedEvent());
+        return payment;
     }
 }

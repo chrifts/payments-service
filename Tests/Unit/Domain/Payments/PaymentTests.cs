@@ -15,11 +15,11 @@ public class PaymentTest
     {
         money = new() { Amount = 2134, Currency = new Currency("BTC", 8) };
         method = new CashPayment(money);
-        payment = new(money, method);
+        payment = Payment.Create(money, method);
     }
 
     [Fact]
-    public void Constructor_SetsAmount()
+    public void Create_SetsAmount()
     {
         // Given
         // When
@@ -47,8 +47,7 @@ public class PaymentTest
         payment.Pay();
 
         // Then
-        Assert.Single(payment.Events);
-        Assert.IsType<PaymentPaidEvent>(payment.Events[0]);
+        Assert.Single(payment.Events.OfType<PaymentPaidEvent>());
     }
 
     [Fact]
@@ -73,8 +72,7 @@ public class PaymentTest
         payment.Pay();
 
         // Then
-        Assert.Single(payment.Events);
-        Assert.IsType<PaymentPaidEvent>(payment.Events[0]);
+        Assert.Single(payment.Events.OfType<PaymentPaidEvent>());
     }
 
     [Fact]
@@ -87,22 +85,31 @@ public class PaymentTest
         Money tendered = new() { Amount = 1, Currency = currency };
 
         CashPayment method = new(tendered);
-        Payment cashPayment = new(toPay, method);
+        Payment cashPayment = Payment.Create(toPay, method);
 
         // When / Then
         Assert.Throws<InsufficientTenderedAmountException>(cashPayment.Pay);
         Assert.False(cashPayment.IsPaid);
-        Assert.Empty(cashPayment.Events);
+        Assert.Empty(cashPayment.Events.OfType<PaymentPaidEvent>());
     }
 
     [Fact]
-    public void Constructor_AssignsUniqueId()
+    public void Create_AssignsUniqueId()
     {
         // Given
         // When
-        Payment otherPayment = new(money, method);
+        Payment otherPayment = Payment.Create(money, method);
 
         // Then
         Assert.NotEqual(payment.Id, otherPayment.Id);
+    }
+
+    [Fact]
+    public void Create_RaisesDomainEvent()
+    {
+        // Given
+        // When
+        // Then
+        Assert.Single(payment.Events.OfType<PaymentCreatedEvent>());
     }
 }
