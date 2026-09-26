@@ -6,6 +6,7 @@ namespace Domain.Payments;
 
 public class Payment(Money amount, PaymentMethod method)
 {
+    public PaymentId Id { get; } = PaymentId.New();
     public Money Amount { get; } = amount;
     public PaymentMethod Method { get; } = method;
     public bool IsPaid { get; private set; }

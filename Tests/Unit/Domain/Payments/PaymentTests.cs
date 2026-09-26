@@ -94,4 +94,15 @@ public class PaymentTest
         Assert.False(cashPayment.IsPaid);
         Assert.Empty(cashPayment.Events);
     }
+
+    [Fact]
+    public void Constructor_AssignsUniqueId()
+    {
+        // Given
+        // When
+        Payment otherPayment = new(money, method);
+
+        // Then
+        Assert.NotEqual(payment.Id, otherPayment.Id);
+    }
 }
