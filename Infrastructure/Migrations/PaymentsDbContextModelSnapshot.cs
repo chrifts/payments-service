@@ -66,6 +66,79 @@ namespace Infrastructure.Migrations
 
                     b.ToTable("Payments");
                 });
+
+            modelBuilder.Entity("Domain.Payments.PaymentMethods.PaymentMethod", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("MethodType")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("varchar(13)");
+
+                    b.Property<Guid>("PaymentId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PaymentId")
+                        .IsUnique();
+
+                    b.ToTable("PaymentMethods", (string)null);
+
+                    b.HasDiscriminator<string>("MethodType").HasValue("PaymentMethod");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("Domain.Payments.PaymentMethods.CashPayment", b =>
+                {
+                    b.HasBaseType("Domain.Payments.PaymentMethods.PaymentMethod");
+
+                    b.ComplexProperty<Dictionary<string, object>>("Tendered", "Domain.Payments.PaymentMethods.CashPayment.Tendered#Money", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 8)
+                                .HasColumnType("decimal(18,8)")
+                                .HasColumnName("TenderedAmount");
+
+                            b1.ComplexProperty<Dictionary<string, object>>("Currency", "Domain.Payments.PaymentMethods.CashPayment.Tendered#Money.Currency#Currency", b2 =>
+                                {
+                                    b2.IsRequired();
+
+                                    b2.Property<string>("Code")
+                                        .IsRequired()
+                                        .HasMaxLength(10)
+                                        .HasColumnType("varchar(10)")
+                                        .HasColumnName("TenderedCurrencyCode");
+
+                                    b2.Property<int>("Precision")
+                                        .HasColumnType("int")
+                                        .HasColumnName("TenderedCurrencyPrecision");
+                                });
+                        });
+
+                    b.HasDiscriminator().HasValue("Cash");
+                });
+
+            modelBuilder.Entity("Domain.Payments.PaymentMethods.PaymentMethod", b =>
+                {
+                    b.HasOne("Domain.Payments.Payment", null)
+                        .WithOne("Method")
+                        .HasForeignKey("Domain.Payments.PaymentMethods.PaymentMethod", "PaymentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Payments.Payment", b =>
+                {
+                    b.Navigation("Method")
+                        .IsRequired();
+                });
 #pragma warning restore 612, 618
         }
     }
