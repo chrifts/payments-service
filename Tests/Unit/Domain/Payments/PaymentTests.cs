@@ -139,4 +139,23 @@ public class PaymentTest
         // Then
         Assert.Equal(createdAt.AddMinutes(10), payment.PaidAt);
     }
+
+    [Fact]
+    public void Create_SetsStatusPending()
+    {
+        // Given
+        // When
+        // Then
+        Assert.Equal(PaymentStatus.Pending, payment.Status);
+    }
+
+    [Fact]
+    public void Pay_SetsStatusPaid()
+    {
+        // Given
+        // When
+        payment.Pay(fakeTimeProvider);
+        // Then
+        Assert.Equal(PaymentStatus.Paid, payment.Status);
+    }
 }

@@ -9,7 +9,8 @@ public class Payment
     public PaymentId Id { get; } = PaymentId.New();
     public Money Amount { get; }
     public PaymentMethod Method { get; }
-    public bool IsPaid { get; private set; }
+    public PaymentStatus Status { get; private set; } = PaymentStatus.Pending;
+    public bool IsPaid => Status == PaymentStatus.Paid;
     public DateTimeOffset CreatedAt { get; }
     public DateTimeOffset? PaidAt { get; private set; }
     private readonly List<IDomainEvent> _events = [];
@@ -31,7 +32,7 @@ public class Payment
 
         Method.EnsureCanPay(Amount);
 
-        IsPaid = true;
+        Status = PaymentStatus.Paid;
         PaidAt = timeProvider.GetUtcNow();
 
         _events.Add(new PaymentPaidEvent());
