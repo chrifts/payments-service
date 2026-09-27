@@ -1,4 +1,6 @@
+using Domain.Payments;
 using Infrastructure.Persistence;
+using Infrastructure.Persistence.Payments;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,6 +28,7 @@ public static class DependencyInjection
         services.AddDbContext<PaymentsDbContext>(options =>
             options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
         );
+        services.AddScoped<IPaymentRepository, PaymentRepository>();
     }
 
     private static void AddSerilog(IServiceCollection services, IConfiguration configuration)
