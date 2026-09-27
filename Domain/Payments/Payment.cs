@@ -16,6 +16,13 @@ public class Payment
     private readonly List<IDomainEvent> _events = [];
     public IReadOnlyList<IDomainEvent> Events => _events;
 
+    // Used by EF Core to materialize from the database
+    private Payment()
+    {
+        Amount = null!;
+        Method = null!;
+    }
+
     private Payment(Money amount, PaymentMethod method, DateTimeOffset createdAt)
     {
         Amount = amount;
