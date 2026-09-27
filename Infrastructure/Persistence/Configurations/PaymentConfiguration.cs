@@ -35,5 +35,7 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         });
 
         builder.Property(payment => payment.CreatedAt);
+
+        builder.Navigation(payment => payment.Method).AutoInclude();
     }
 }
