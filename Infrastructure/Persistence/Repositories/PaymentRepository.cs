@@ -1,7 +1,7 @@
 using Domain.Payments;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Persistence.Payments;
+namespace Infrastructure.Persistence.Repositories;
 
 public class PaymentRepository(PaymentsDbContext context) : IPaymentRepository
 {

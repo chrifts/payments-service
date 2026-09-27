@@ -1,6 +1,6 @@
 using Domain.Payments;
 using Infrastructure.Persistence;
-using Infrastructure.Persistence.Payments;
+using Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

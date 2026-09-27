@@ -2,7 +2,7 @@ using Domain.Payments;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Infrastructure.Persistence.Payments;
+namespace Infrastructure.Persistence.Configurations;
 
 public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
 {
