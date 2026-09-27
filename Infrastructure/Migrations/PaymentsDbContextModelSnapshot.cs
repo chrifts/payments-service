@@ -42,8 +42,8 @@ namespace Infrastructure.Migrations
                             b1.IsRequired();
 
                             b1.Property<decimal>("Amount")
-                                .HasPrecision(18, 8)
-                                .HasColumnType("decimal(18,8)")
+                                .HasPrecision(28, 8)
+                                .HasColumnType("decimal(28,8)")
                                 .HasColumnName("Amount");
 
                             b1.ComplexProperty<Dictionary<string, object>>("Currency", "Domain.Payments.Payment.Amount#Money.Currency#Currency", b2 =>
@@ -102,8 +102,8 @@ namespace Infrastructure.Migrations
                             b1.IsRequired();
 
                             b1.Property<decimal>("Amount")
-                                .HasPrecision(18, 8)
-                                .HasColumnType("decimal(18,8)")
+                                .HasPrecision(28, 8)
+                                .HasColumnType("decimal(28,8)")
                                 .HasColumnName("TenderedAmount");
 
                             b1.ComplexProperty<Dictionary<string, object>>("Currency", "Domain.Payments.PaymentMethods.CashPayment.Tendered#Money.Currency#Currency", b2 =>

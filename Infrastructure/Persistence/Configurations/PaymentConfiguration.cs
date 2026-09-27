@@ -25,7 +25,7 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         {
             moneyBuilder.Property(money => money.Amount)
                 .HasColumnName("Amount")
-                .HasPrecision(18, 8); // decimal(18,8): up to 8 decimals (BTC)
+                .HasPrecision(28, 8); // decimal(28,8): 20 integer digits (high-value currencies) + 8 decimals (BTC)
 
             moneyBuilder.ComplexProperty(money => money.Currency, currencyBuilder =>
             {

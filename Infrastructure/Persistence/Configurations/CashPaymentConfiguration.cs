@@ -12,7 +12,7 @@ public class CashPaymentConfiguration : IEntityTypeConfiguration<CashPayment>
         {
             moneyBuilder.Property(money => money.Amount)
                 .HasColumnName("TenderedAmount")
-                .HasPrecision(18, 8);
+                .HasPrecision(28, 8); // same as Payment.Amount: compared in the same currency
 
             moneyBuilder.ComplexProperty(money => money.Currency, currencyBuilder =>
             {
