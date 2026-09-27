@@ -1,7 +1,7 @@
 using Domain.Payments;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure;
+namespace Infrastructure.Persistence;
 
 public class PaymentsDbContext(DbContextOptions<PaymentsDbContext> options) : DbContext(options)
 {
