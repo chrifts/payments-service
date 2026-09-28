@@ -6,21 +6,21 @@ using Microsoft.Extensions.Time.Testing;
 
 namespace Tests.Unit.Domain.Payments;
 
-public class PaymentTest
+public class PaymentTests
 {
-    readonly Money money;
-    readonly PaymentMethod method;
-    readonly Payment payment;
-    readonly FakeTimeProvider fakeTimeProvider;
-    readonly DateTimeOffset createdAt;
+    private readonly Money _money;
+    private readonly PaymentMethod _method;
+    private readonly Payment _payment;
+    private readonly FakeTimeProvider _fakeTimeProvider;
+    private readonly DateTimeOffset _createdAt;
 
-    public PaymentTest()
+    public PaymentTests()
     {
-        money = new() { Amount = 2134, Currency = new Currency("BTC", 8) };
-        method = new CashPayment(money);
-        createdAt = new(2026, 9, 26, 12, 0, 0, TimeSpan.Zero);
-        fakeTimeProvider = new FakeTimeProvider(createdAt);
-        payment = Payment.Create(money, method, fakeTimeProvider);
+        _money = new() { Amount = 2134, Currency = new Currency("BTC", 8) };
+        _method = new CashPayment(_money);
+        _createdAt = new(2026, 9, 26, 12, 0, 0, TimeSpan.Zero);
+        _fakeTimeProvider = new FakeTimeProvider(_createdAt);
+        _payment = Payment.Create(_money, _method, _fakeTimeProvider);
     }
 
     [Fact]
@@ -29,8 +29,8 @@ public class PaymentTest
         // Given
         // When
         // Then
-        Assert.Equal(2134, payment.Amount.Amount);
-        Assert.Equal(method, payment.Method);
+        Assert.Equal(2134, _payment.Amount.Amount);
+        Assert.Equal(_method, _payment.Method);
     }
 
     [Fact]
@@ -38,10 +38,10 @@ public class PaymentTest
     {
         // Given
         // When
-        payment.Pay(fakeTimeProvider);
+        _payment.Pay(_fakeTimeProvider);
 
         // Then
-        Assert.True(payment.IsPaid);
+        Assert.True(_payment.IsPaid);
     }
 
     [Fact]
@@ -49,23 +49,23 @@ public class PaymentTest
     {
         // Given
         // When
-        payment.Pay(fakeTimeProvider);
+        _payment.Pay(_fakeTimeProvider);
 
         // Then
-        Assert.Single(payment.Events.OfType<PaymentPaidEvent>());
+        Assert.Single(_payment.Events.OfType<PaymentPaidEvent>());
     }
 
     [Fact]
     public void ClearEvents_RemovesAllEvents()
     {
         // Given
-        payment.Pay(fakeTimeProvider);
+        _payment.Pay(_fakeTimeProvider);
 
         // When
-        payment.ClearEvents();
+        _payment.ClearEvents();
 
         // Then
-        Assert.Empty(payment.Events);
+        Assert.Empty(_payment.Events);
     }
 
     [Fact]
@@ -73,11 +73,11 @@ public class PaymentTest
     {
         // Given
         // When
-        payment.Pay(fakeTimeProvider);
-        payment.Pay(fakeTimeProvider);
+        _payment.Pay(_fakeTimeProvider);
+        _payment.Pay(_fakeTimeProvider);
 
         // Then
-        Assert.Single(payment.Events.OfType<PaymentPaidEvent>());
+        Assert.Single(_payment.Events.OfType<PaymentPaidEvent>());
     }
 
     [Fact]
@@ -90,10 +90,10 @@ public class PaymentTest
         Money tendered = new() { Amount = 1, Currency = currency };
 
         CashPayment method = new(tendered);
-        Payment cashPayment = Payment.Create(toPay, method, fakeTimeProvider);
+        Payment cashPayment = Payment.Create(toPay, method, _fakeTimeProvider);
 
         // When / Then
-        Assert.Throws<InsufficientTenderedAmountException>(() => cashPayment.Pay(fakeTimeProvider));
+        Assert.Throws<InsufficientTenderedAmountException>(() => cashPayment.Pay(_fakeTimeProvider));
         Assert.False(cashPayment.IsPaid);
         Assert.Empty(cashPayment.Events.OfType<PaymentPaidEvent>());
     }
@@ -103,10 +103,10 @@ public class PaymentTest
     {
         // Given
         // When
-        Payment otherPayment = Payment.Create(money, method, fakeTimeProvider);
+        Payment otherPayment = Payment.Create(_money, _method, _fakeTimeProvider);
 
         // Then
-        Assert.NotEqual(payment.Id, otherPayment.Id);
+        Assert.NotEqual(_payment.Id, otherPayment.Id);
     }
 
     [Fact]
@@ -115,7 +115,7 @@ public class PaymentTest
         // Given
         // When
         // Then
-        Assert.Single(payment.Events.OfType<PaymentCreatedEvent>());
+        Assert.Single(_payment.Events.OfType<PaymentCreatedEvent>());
     }
 
     [Fact]
@@ -124,20 +124,20 @@ public class PaymentTest
         // Given
         // When
         // Then
-        Assert.Equal(createdAt, payment.CreatedAt);
+        Assert.Equal(_createdAt, _payment.CreatedAt);
     }
 
     [Fact]
     public void Pay_SetsPaidAt()
     {
         // Given
-        fakeTimeProvider.Advance(TimeSpan.FromMinutes(10));
+        _fakeTimeProvider.Advance(TimeSpan.FromMinutes(10));
 
         // When
-        payment.Pay(fakeTimeProvider);
+        _payment.Pay(_fakeTimeProvider);
 
         // Then
-        Assert.Equal(createdAt.AddMinutes(10), payment.PaidAt);
+        Assert.Equal(_createdAt.AddMinutes(10), _payment.PaidAt);
     }
 
     [Fact]
@@ -146,7 +146,7 @@ public class PaymentTest
         // Given
         // When
         // Then
-        Assert.Equal(PaymentStatus.Pending, payment.Status);
+        Assert.Equal(PaymentStatus.Pending, _payment.Status);
     }
 
     [Fact]
@@ -154,8 +154,8 @@ public class PaymentTest
     {
         // Given
         // When
-        payment.Pay(fakeTimeProvider);
+        _payment.Pay(_fakeTimeProvider);
         // Then
-        Assert.Equal(PaymentStatus.Paid, payment.Status);
+        Assert.Equal(PaymentStatus.Paid, _payment.Status);
     }
 }
