@@ -44,7 +44,7 @@ public class PaymentRepositoryTests : IClassFixture<MySqlFixture>
         Assert.NotNull(loaded);
         Assert.NotSame(_payment, loaded);
         Assert.Equal(_payment.Id, loaded.Id);
-        Assert.Equal(_money, loaded.Amount);
+        Assert.Equal(_money, loaded.AmountDue);
         Assert.Equal(PaymentStatus.Pending, loaded.Status);
         Assert.Equal(_createdAt, loaded.CreatedAt);
         Assert.Null(loaded.PaidAt);

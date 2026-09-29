@@ -29,7 +29,7 @@ public class PaymentTests
         // Given
         // When
         // Then
-        Assert.Equal(2134, _payment.Amount.Amount);
+        Assert.Equal(2134, _payment.AmountDue.Amount);
         Assert.Equal(_method, _payment.Method);
     }
 

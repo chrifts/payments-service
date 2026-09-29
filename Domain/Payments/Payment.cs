@@ -7,7 +7,7 @@ namespace Domain.Payments;
 public class Payment
 {
     public PaymentId Id { get; } = PaymentId.New();
-    public Money Amount { get; }
+    public Money AmountDue { get; }
     public PaymentMethod Method { get; }
     public PaymentStatus Status { get; private set; } = PaymentStatus.Pending;
     public bool IsPaid => Status == PaymentStatus.Paid;
@@ -19,13 +19,13 @@ public class Payment
     // Used by EF Core to materialize from the database
     private Payment()
     {
-        Amount = null!;
+        AmountDue = null!;
         Method = null!;
     }
 
-    private Payment(Money amount, PaymentMethod method, DateTimeOffset createdAt)
+    private Payment(Money amountDue, PaymentMethod method, DateTimeOffset createdAt)
     {
-        Amount = amount;
+        AmountDue = amountDue;
         Method = method;
         CreatedAt = createdAt;
     }
@@ -37,7 +37,7 @@ public class Payment
             return;
         }
 
-        Method.EnsureCanPay(Amount);
+        Method.EnsureCanPay(AmountDue);
 
         Status = PaymentStatus.Paid;
         PaidAt = timeProvider.GetUtcNow();
@@ -50,9 +50,9 @@ public class Payment
         _events.Clear();
     }
 
-    public static Payment Create(Money amount, PaymentMethod method, TimeProvider timeProvider)
+    public static Payment Create(Money amountDue, PaymentMethod method, TimeProvider timeProvider)
     {
-        Payment payment = new(amount, method, timeProvider.GetUtcNow());
+        Payment payment = new(amountDue, method, timeProvider.GetUtcNow());
         payment._events.Add(new PaymentCreatedEvent());
         return payment;
     }

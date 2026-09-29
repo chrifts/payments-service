@@ -21,7 +21,7 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.Property(payment => payment.Id)
             .HasConversion(paymentId => paymentId.Value, guid => new PaymentId(guid));
 
-        builder.ComplexProperty(payment => payment.Amount, moneyBuilder =>
+        builder.ComplexProperty(payment => payment.AmountDue, moneyBuilder =>
         {
             moneyBuilder.Property(money => money.Amount)
                 .HasColumnName("Amount")
