@@ -6,7 +6,7 @@ namespace Tests.Unit.Domain.Payments.PaymentMethods;
 
 public class CashPaymentTests
 {
-    private readonly Currency usd = new("USD", 2);
+    private readonly Currency usd = Currency.FromCode("USD");
 
     [Theory]
     [InlineData(1233.99)]

@@ -4,7 +4,7 @@ namespace Tests.Unit.Domain.Payments;
 
 public class MoneyTests
 {
-    private readonly Currency usd = new("USD", 2);
+    private readonly Currency usd = Currency.FromCode("USD");
 
     [Theory]
     [InlineData(0)]
@@ -56,7 +56,7 @@ public class MoneyTests
     {
         // Given
         var money = new Money { Amount = 1234, Currency = usd };
-        var other = new Money { Amount = 1, Currency = new Currency("BTC", 8) };
+        var other = new Money { Amount = 1, Currency = Currency.FromCode("BTC") };
 
         // When / Then
         Assert.Throws<ArgumentException>(() => money.GreaterOrEqualTo(other));

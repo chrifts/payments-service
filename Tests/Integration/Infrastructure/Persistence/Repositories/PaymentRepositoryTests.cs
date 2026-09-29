@@ -18,7 +18,7 @@ public class PaymentRepositoryTests : IClassFixture<MySqlFixture>
     public PaymentRepositoryTests(MySqlFixture fixture)
     {
         _fixture = fixture;
-        _money = new() { Amount = 2134, Currency = new Currency("BTC", 8) };
+        _money = new() { Amount = 2134, Currency = Currency.FromCode("BTC") };
         _method = new CashPayment(_money);
         _createdAt = new(2026, 9, 26, 12, 0, 0, TimeSpan.Zero);
         _fakeTimeProvider = new FakeTimeProvider(_createdAt);
