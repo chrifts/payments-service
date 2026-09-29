@@ -18,7 +18,7 @@ public static class DependencyInjection
     {
         AddSerilog(services, configuration);
         AddDatabase(services, configuration);
-
+        services.AddSingleton(TimeProvider.System);
         return services;
     }
 
