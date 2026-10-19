@@ -1,11 +1,14 @@
 using System.Text.Json.Serialization.Metadata;
 using Application;
 using Infrastructure;
+using Serilog;
 using Web.ExceptionHandling;
 using Web.Payments;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Sinks and levels come from appsettings: sending logs somewhere else doesn't need a code change
+builder.Services.AddSerilog((_, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(builder.Configuration));
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 

@@ -9,8 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Serilog;
 
 namespace Infrastructure;
 
@@ -21,7 +19,6 @@ public static class DependencyInjection
         IConfiguration configuration
     )
     {
-        AddSerilog(services, configuration);
         AddDatabase(services, configuration);
         services.AddSingleton(TimeProvider.System);
         services.AddScoped<IDomainEventPublisher, LoggingDomainEventPublisher>();
@@ -44,20 +41,5 @@ public static class DependencyInjection
         // Same scoped DbContext as the repositories, so SaveChangesAsync saves what they track
         services.AddScoped<IUnitOfWork>(serviceProvider => serviceProvider.GetRequiredService<PaymentsDbContext>());
         services.AddScoped<IPaymentRepository, PaymentRepository>();
-    }
-
-    private static void AddSerilog(IServiceCollection services, IConfiguration configuration)
-    {
-        Log.Logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(configuration)
-            .WriteTo.Console()
-            .WriteTo.File("logs/log-.log", rollingInterval: RollingInterval.Day)
-            .CreateLogger();
-
-        services.AddLogging(builder =>
-        {
-            builder.ClearProviders();
-            builder.AddSerilog();
-        });
     }
 }
