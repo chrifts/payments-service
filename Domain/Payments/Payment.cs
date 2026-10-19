@@ -4,7 +4,7 @@ using Domain.Shared.Events;
 
 namespace Domain.Payments;
 
-public class Payment
+public class Payment : IHasDomainEvents
 {
     public PaymentId Id { get; } = PaymentId.New();
     public Money AmountDue { get; }
@@ -39,10 +39,11 @@ public class Payment
 
         Method.EnsureCanPay(AmountDue);
 
+        DateTimeOffset paidAt = timeProvider.GetUtcNow();
         Status = PaymentStatus.Paid;
-        PaidAt = timeProvider.GetUtcNow();
+        PaidAt = paidAt;
 
-        _events.Add(new PaymentPaidEvent());
+        _events.Add(new PaymentPaidEvent(Id, paidAt));
     }
 
     public void ClearEvents()
@@ -53,7 +54,7 @@ public class Payment
     public static Payment Create(Money amountDue, PaymentMethod method, TimeProvider timeProvider)
     {
         Payment payment = new(amountDue, method, timeProvider.GetUtcNow());
-        payment._events.Add(new PaymentCreatedEvent());
+        payment._events.Add(new PaymentCreatedEvent(payment.Id, payment.CreatedAt));
         return payment;
     }
 }

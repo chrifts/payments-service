@@ -48,11 +48,14 @@ public class PaymentTests
     public void Pay_RaisesDomainEvent()
     {
         // Given
+        _fakeTimeProvider.Advance(TimeSpan.FromMinutes(10));
+
         // When
         _payment.Pay(_fakeTimeProvider);
 
         // Then
-        Assert.Single(_payment.Events.OfType<PaymentPaidEvent>());
+        PaymentPaidEvent paidEvent = Assert.Single(_payment.Events.OfType<PaymentPaidEvent>());
+        Assert.Equal(new PaymentPaidEvent(_payment.Id, _createdAt.AddMinutes(10)), paidEvent);
     }
 
     [Fact]
@@ -115,7 +118,8 @@ public class PaymentTests
         // Given
         // When
         // Then
-        Assert.Single(_payment.Events.OfType<PaymentCreatedEvent>());
+        PaymentCreatedEvent createdEvent = Assert.Single(_payment.Events.OfType<PaymentCreatedEvent>());
+        Assert.Equal(new PaymentCreatedEvent(_payment.Id, _createdAt), createdEvent);
     }
 
     [Fact]

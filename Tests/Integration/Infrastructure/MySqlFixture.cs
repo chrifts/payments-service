@@ -1,5 +1,6 @@
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Testcontainers.MySql;
 
 namespace Tests.Integration.Infrastructure;
@@ -21,12 +22,13 @@ public class MySqlFixture : IAsyncLifetime
         await _container.DisposeAsync();
     }
 
-    public PaymentsDbContext CreateContext()
+    public PaymentsDbContext CreateContext(params IInterceptor[] interceptors)
     {
         string connectionString = _container.GetConnectionString();
 
         DbContextOptions<PaymentsDbContext> options = new DbContextOptionsBuilder<PaymentsDbContext>()
             .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+            .AddInterceptors(interceptors)
             .Options;
 
         return new PaymentsDbContext(options);
