@@ -26,17 +26,14 @@ public class PaymentTests
     [Fact]
     public void Create_SetsAmount()
     {
-        // Given
-        // When
         // Then
         Assert.Equal(2134, _payment.AmountDue.Amount);
         Assert.Equal(_method, _payment.Method);
     }
 
     [Fact]
-    public void Mark_AsPaid()
+    public void Pay_MarksAsPaid()
     {
-        // Given
         // When
         _payment.Pay(_fakeTimeProvider);
 
@@ -74,7 +71,6 @@ public class PaymentTests
     [Fact]
     public void Pay_WhenAlreadyPaid_DoesNotRaiseAnotherEvent()
     {
-        // Given
         // When
         _payment.Pay(_fakeTimeProvider);
         _payment.Pay(_fakeTimeProvider);
@@ -104,7 +100,6 @@ public class PaymentTests
     [Fact]
     public void Create_AssignsUniqueId()
     {
-        // Given
         // When
         Payment otherPayment = Payment.Create(_money, _method, _fakeTimeProvider);
 
@@ -115,8 +110,6 @@ public class PaymentTests
     [Fact]
     public void Create_RaisesDomainEvent()
     {
-        // Given
-        // When
         // Then
         PaymentCreatedEvent createdEvent = Assert.Single(_payment.Events.OfType<PaymentCreatedEvent>());
         Assert.Equal(new PaymentCreatedEvent(_payment.Id, _createdAt), createdEvent);
@@ -125,8 +118,6 @@ public class PaymentTests
     [Fact]
     public void Create_SetsCreatedAt()
     {
-        // Given
-        // When
         // Then
         Assert.Equal(_createdAt, _payment.CreatedAt);
     }
@@ -147,8 +138,6 @@ public class PaymentTests
     [Fact]
     public void Create_SetsStatusPending()
     {
-        // Given
-        // When
         // Then
         Assert.Equal(PaymentStatus.Pending, _payment.Status);
     }
@@ -156,7 +145,6 @@ public class PaymentTests
     [Fact]
     public void Pay_SetsStatusPaid()
     {
-        // Given
         // When
         _payment.Pay(_fakeTimeProvider);
         // Then

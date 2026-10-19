@@ -5,7 +5,7 @@ namespace Tests.Unit.Domain.Payments;
 
 public class MoneyTests
 {
-    private readonly Currency usd = Currency.FromCode("USD");
+    private readonly Currency _usd = Currency.FromCode("USD");
 
     [Theory]
     [InlineData(0)]
@@ -13,7 +13,7 @@ public class MoneyTests
     public void Constructor_WithZeroOrNegativeAmount_Throws(decimal amount)
     {
         // When / Then
-        Assert.Throws<InvalidAmountException>(() => new Money(amount, usd));
+        Assert.Throws<InvalidAmountException>(() => new Money(amount, _usd));
     }
 
     [Theory]
@@ -49,8 +49,8 @@ public class MoneyTests
     public void GreaterOrEqualTo_WhenSmaller_ReturnsFalse(decimal value)
     {
         // Given
-        var money = new Money(value, usd);
-        var other = new Money(1234, usd);
+        var money = new Money(value, _usd);
+        var other = new Money(1234, _usd);
 
         // When
         var result = money.GreaterOrEqualTo(other);
@@ -65,8 +65,8 @@ public class MoneyTests
     public void GreaterOrEqualTo_WhenEqualOrGreater_ReturnsTrue(decimal value)
     {
         // Given
-        var money = new Money(value, usd);
-        var other = new Money(1234, usd);
+        var money = new Money(value, _usd);
+        var other = new Money(1234, _usd);
 
         // When
         var result = money.GreaterOrEqualTo(other);
@@ -79,7 +79,7 @@ public class MoneyTests
     public void GreaterOrEqualTo_WithDifferentCurrency_Throws()
     {
         // Given
-        var money = new Money(1234, usd);
+        var money = new Money(1234, _usd);
         var other = new Money(1, Currency.FromCode("BTC"));
 
         // When / Then

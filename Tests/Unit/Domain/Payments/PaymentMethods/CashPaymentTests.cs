@@ -6,7 +6,7 @@ namespace Tests.Unit.Domain.Payments.PaymentMethods;
 
 public class CashPaymentTests
 {
-    private readonly Currency usd = Currency.FromCode("USD");
+    private readonly Currency _usd = Currency.FromCode("USD");
 
     [Theory]
     [InlineData(1233.99)]
@@ -14,8 +14,8 @@ public class CashPaymentTests
     public void EnsureCanPay_WhenTenderedIsLess_Throws(decimal tendered)
     {
         // Given
-        var method = new CashPayment(new Money(tendered, usd));
-        var amountDue = new Money(1234, usd);
+        var method = new CashPayment(new Money(tendered, _usd));
+        var amountDue = new Money(1234, _usd);
 
         // When / Then
         Assert.Throws<InsufficientTenderedAmountException>(() => method.EnsureCanPay(amountDue));
@@ -27,8 +27,8 @@ public class CashPaymentTests
     public void EnsureCanPay_WhenTenderedIsEqualOrGreater_DoesNotThrow(decimal tendered)
     {
         // Given
-        var method = new CashPayment(new Money(tendered, usd));
-        var amountDue = new Money(1234, usd);
+        var method = new CashPayment(new Money(tendered, _usd));
+        var amountDue = new Money(1234, _usd);
 
         // When
         var exception = Record.Exception(() => method.EnsureCanPay(amountDue));

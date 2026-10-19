@@ -5,7 +5,6 @@ namespace Tests.Unit.Domain.Payments;
 
 public class PaymentIdTests
 {
-
     [Fact]
     public void New_GeneratesNonEmptyId()
     {
@@ -20,9 +19,7 @@ public class PaymentIdTests
     [Fact]
     public void Constructor_WithEmptyGuid_Throws()
     {
-        // Given
-        // When
-        // Then
+        // When / Then
         Assert.Throws<InvalidPaymentIdException>(() => new PaymentId(Guid.Empty));
     }
 
@@ -40,13 +37,12 @@ public class PaymentIdTests
     }
 
     [Fact]
-    public void TwoIds_WithSameGuid_AreEqual()
+    public void Equals_WithSameGuid_ReturnsTrue()
     {
         // Given
         Guid guid = Guid.CreateVersion7();
         PaymentId paymentId = new(guid);
         PaymentId otherReferenceButSameValue = new(guid);
-        // When
         // Then
         Assert.Equal(paymentId, otherReferenceButSameValue);
     }

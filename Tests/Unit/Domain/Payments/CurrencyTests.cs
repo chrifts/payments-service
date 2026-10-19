@@ -11,9 +11,7 @@ public class CurrencyTests
     [InlineData(" ")]
     public void FromCode_WithEmptyCode_Throws(string? code)
     {
-        // Given
-        // When
-        // Then
+        // When / Then
         Assert.Throws<UnsupportedCurrencyException>(() => Currency.FromCode(code!));
     }
 
@@ -24,7 +22,6 @@ public class CurrencyTests
     [InlineData("CLP", 0)]
     public void FromCode_WithKnownCode_ReturnsCurrencyWithPrecision(string code, int expectedPrecision)
     {
-        // Given
         // When
         var currency = Currency.FromCode(code);
         // Then
@@ -34,7 +31,6 @@ public class CurrencyTests
     [Fact]
     public void FromCode_WithLowercaseCode_NormalizesToUppercase()
     {
-        // Given
         // When
         var currency = Currency.FromCode("eur");
         // Then
@@ -45,9 +41,7 @@ public class CurrencyTests
     [Fact]
     public void FromCode_WithUnknownCode_Throws()
     {
-        // Given
-        // When
-        // Then
+        // When / Then
         Assert.Throws<UnsupportedCurrencyException>(() => Currency.FromCode("xyz"));
     }
 }
