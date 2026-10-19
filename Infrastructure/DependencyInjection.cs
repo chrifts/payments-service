@@ -25,8 +25,11 @@ public static class DependencyInjection
     private static void AddDatabase(IServiceCollection services, IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString("PaymentsDb");
+        // Fixed to the mysql:8.4 image (docker-compose.yml). AutoDetect would query the server every time
+        // the options are built (once per request), and `dotnet ef` would need a running database.
+        var serverVersion = new MySqlServerVersion(new Version(8, 4, 0));
         services.AddDbContext<PaymentsDbContext>(options =>
-            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+            options.UseMySql(connectionString, serverVersion)
         );
         services.AddScoped<IPaymentRepository, PaymentRepository>();
     }
