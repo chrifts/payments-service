@@ -1,6 +1,8 @@
+using Domain.Payments.Exceptions;
+
 namespace Domain.Payments;
 
-public record PaymentId
+public sealed record PaymentId
 {
     public Guid Value { get; }
 
@@ -8,7 +10,7 @@ public record PaymentId
     {
         if (value == Guid.Empty)
         {
-            throw new ArgumentException("Empty Guid");
+            throw new InvalidPaymentIdException();
         }
 
         Value = value;

@@ -1,4 +1,5 @@
 using Domain.Payments;
+using Domain.Payments.Exceptions;
 
 namespace Tests.Unit.Domain.Payments;
 
@@ -12,7 +13,7 @@ public class MoneyTests
     public void Constructor_WithZeroOrNegativeAmount_Throws(decimal amount)
     {
         // When / Then
-        Assert.Throws<ArgumentOutOfRangeException>(() => new Money(amount, usd));
+        Assert.Throws<InvalidAmountException>(() => new Money(amount, usd));
     }
 
     [Theory]
@@ -24,7 +25,7 @@ public class MoneyTests
         var currency = Currency.FromCode(currencyCode);
 
         // When / Then
-        Assert.Throws<ArgumentException>(() => new Money(amount, currency));
+        Assert.Throws<InvalidAmountException>(() => new Money(amount, currency));
     }
 
     [Theory]
@@ -82,6 +83,6 @@ public class MoneyTests
         var other = new Money(1, Currency.FromCode("BTC"));
 
         // When / Then
-        Assert.Throws<ArgumentException>(() => money.GreaterOrEqualTo(other));
+        Assert.Throws<CurrencyMismatchException>(() => money.GreaterOrEqualTo(other));
     }
 }

@@ -1,4 +1,5 @@
 using Domain.Payments;
+using Domain.Payments.Exceptions;
 
 namespace Tests.Unit.Domain.Payments;
 
@@ -22,7 +23,7 @@ public class PaymentIdTests
         // Given
         // When
         // Then
-        Assert.Throws<ArgumentException>(() => new PaymentId(Guid.Empty));
+        Assert.Throws<InvalidPaymentIdException>(() => new PaymentId(Guid.Empty));
     }
 
     [Fact]

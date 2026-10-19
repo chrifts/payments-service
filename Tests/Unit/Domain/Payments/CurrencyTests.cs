@@ -1,4 +1,5 @@
 using Domain.Payments;
+using Domain.Payments.Exceptions;
 
 namespace Tests.Unit.Domain.Payments;
 
@@ -8,12 +9,12 @@ public class CurrencyTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData(" ")]
-    public void Code_MustNotBeEmpty(string? code)
+    public void FromCode_WithEmptyCode_Throws(string? code)
     {
         // Given
         // When
         // Then
-        Assert.ThrowsAny<ArgumentException>(() => Currency.FromCode(code!));
+        Assert.Throws<UnsupportedCurrencyException>(() => Currency.FromCode(code!));
     }
 
     [Theory]
@@ -47,6 +48,6 @@ public class CurrencyTests
         // Given
         // When
         // Then
-        Assert.Throws<ArgumentException>(() => Currency.FromCode("xyz"));
+        Assert.Throws<UnsupportedCurrencyException>(() => Currency.FromCode("xyz"));
     }
 }

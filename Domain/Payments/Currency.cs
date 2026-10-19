@@ -1,3 +1,5 @@
+using Domain.Payments.Exceptions;
+
 namespace Domain.Payments;
 
 // sealed + get-only properties: no subclass or `with` expression can bypass FromCode
@@ -25,15 +27,14 @@ public sealed record Currency
 
     public static Currency FromCode(string code)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(code);
+        // Null, empty and unknown codes all miss the dictionary: one check covers them
+        string normalizedCode = code?.ToUpperInvariant() ?? string.Empty;
 
-        code = code.ToUpperInvariant();
-
-        if (PrecisionByCode.TryGetValue(code, out int precision))
+        if (!PrecisionByCode.TryGetValue(normalizedCode, out int precision))
         {
-            return new Currency(code, precision);
+            throw new UnsupportedCurrencyException(code);
         }
 
-        throw new ArgumentException("Currency code not supported", nameof(code));
+        return new Currency(normalizedCode, precision);
     }
 }

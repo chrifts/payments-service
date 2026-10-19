@@ -1,3 +1,5 @@
+using Domain.Payments.Exceptions;
+
 namespace Domain.Payments;
 
 public sealed record Money
@@ -13,12 +15,15 @@ public sealed record Money
 
     public Money(decimal amount, Currency currency)
     {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(amount);
+        if (amount <= 0)
+        {
+            throw InvalidAmountException.NotPositive(amount);
+        }
 
         // Round, not amount.Scale: 10.00m has Scale 2 but is a valid JPY amount
         if (decimal.Round(amount, currency.Precision) != amount)
         {
-            throw new ArgumentException($"{currency.Code} allows at most {currency.Precision} decimals", nameof(amount));
+            throw InvalidAmountException.TooManyDecimals(amount, currency);
         }
 
         Amount = amount;
@@ -35,7 +40,7 @@ public sealed record Money
     {
         if (currency != Currency)
         {
-            throw new ArgumentException("Currency mismatch", nameof(currency));
+            throw new CurrencyMismatchException(Currency, currency);
         }
     }
 }
