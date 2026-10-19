@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# The workflow only reads the repository
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore payments.slnx
+
+      - name: Build
+        run: dotnet build payments.slnx --no-restore
+
+      # Integration tests start MySQL with Testcontainers: ubuntu-latest runners already have Docker
+      - name: Test
+        run: dotnet test payments.slnx --no-build
