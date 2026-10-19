@@ -1,29 +1,12 @@
 namespace Domain.Payments;
 
-public record Currency
+// sealed + get-only properties: no subclass or `with` expression can bypass FromCode
+public sealed record Currency
 {
-    private readonly string _code = null!;
-    public string Code
-    {
-        get => _code;
-        init
-        {
-            ArgumentException.ThrowIfNullOrWhiteSpace(value);
-            _code = value;
-        }
-    }
+    public string Code { get; }
+    public int Precision { get; }
 
-    private readonly int _precision;
-    public int Precision
-    {
-        get => _precision;
-        init
-        {
-            ArgumentOutOfRangeException.ThrowIfNegative(value);
-            _precision = value;
-        }
-    }
-
+    // No validation here: only FromCode (already validated) and EF Core (loading from the database) call it
     private Currency(string code, int precision)
     {
         Code = code;
