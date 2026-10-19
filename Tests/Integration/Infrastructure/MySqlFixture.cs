@@ -22,12 +22,12 @@ public class MySqlFixture : IAsyncLifetime
         await _container.DisposeAsync();
     }
 
+    public string ConnectionString => _container.GetConnectionString();
+
     public PaymentsDbContext CreateContext(params IInterceptor[] interceptors)
     {
-        string connectionString = _container.GetConnectionString();
-
         DbContextOptions<PaymentsDbContext> options = new DbContextOptionsBuilder<PaymentsDbContext>()
-            .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+            .UseMySql(ConnectionString, ServerVersion.AutoDetect(ConnectionString))
             .AddInterceptors(interceptors)
             .Options;
 

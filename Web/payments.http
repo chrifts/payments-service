@@ -1,0 +1,55 @@
+@baseUrl = http://localhost:5039
+
+### Create a cash payment (201 + Location)
+# @name createPayment
+POST {{baseUrl}}/payments
+Content-Type: application/json
+
+{
+  "amountDue": 100.50,
+  "currencyCode": "EUR",
+  "paymentMethod": { "type": "cash", "tenderedAmount": 120 }
+}
+
+### Get it (200, status "Pending")
+GET {{baseUrl}}/payments/{{createPayment.response.body.$.id}}
+
+### Pay it (200, status "Paid"; paying again changes nothing)
+POST {{baseUrl}}/payments/{{createPayment.response.body.$.id}}/pay
+
+### Unknown payment (404)
+GET {{baseUrl}}/payments/11111111-1111-1111-1111-111111111111
+
+### Unsupported currency (400 ProblemDetails)
+POST {{baseUrl}}/payments
+Content-Type: application/json
+
+{
+  "amountDue": 10,
+  "currencyCode": "XYZ",
+  "paymentMethod": { "type": "cash", "tenderedAmount": 10 }
+}
+
+### JPY has no decimals (400 ProblemDetails)
+POST {{baseUrl}}/payments
+Content-Type: application/json
+
+{
+  "amountDue": 10.5,
+  "currencyCode": "JPY",
+  "paymentMethod": { "type": "cash", "tenderedAmount": 20 }
+}
+
+### Not enough cash: it is created...
+# @name shortCashPayment
+POST {{baseUrl}}/payments
+Content-Type: application/json
+
+{
+  "amountDue": 100,
+  "currencyCode": "USD",
+  "paymentMethod": { "type": "cash", "tenderedAmount": 50 }
+}
+
+### ...but paying it fails (400 ProblemDetails)
+POST {{baseUrl}}/payments/{{shortCashPayment.response.body.$.id}}/pay

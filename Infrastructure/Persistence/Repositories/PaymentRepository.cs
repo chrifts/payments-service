@@ -5,10 +5,10 @@ namespace Infrastructure.Persistence.Repositories;
 
 public class PaymentRepository(PaymentsDbContext context) : IPaymentRepository
 {
-    public async Task AddAsync(Payment payment, CancellationToken cancellationToken)
+    // Only registers the payment: it's inserted when the unit of work saves
+    public void Add(Payment payment)
     {
         context.Payments.Add(payment);
-        await context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<Payment?> GetByIdAsync(PaymentId id, CancellationToken cancellationToken)

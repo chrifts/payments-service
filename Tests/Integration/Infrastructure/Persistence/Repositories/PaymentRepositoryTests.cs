@@ -26,13 +26,14 @@ public class PaymentRepositoryTests : IClassFixture<MySqlFixture>
     }
 
     [Fact]
-    public async Task AddAsync_ThenGetByIdAsync_ReturnsSamePayment()
+    public async Task Add_ThenGetByIdAsync_ReturnsSamePayment()
     {
         // Given
         // Braces scope the write context: it's disposed right after saving, not at the end of the method
         await using (PaymentsDbContext writeContext = _fixture.CreateContext())
         {
-            await new PaymentRepository(writeContext).AddAsync(_payment, CancellationToken.None);
+            new PaymentRepository(writeContext).Add(_payment);
+            await writeContext.SaveChangesAsync();
         }
 
         // When

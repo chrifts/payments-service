@@ -1,7 +1,8 @@
 namespace Domain.Payments;
 
+// A collection of payments: it doesn't save, IUnitOfWork does
 public interface IPaymentRepository
 {
-    Task AddAsync(Payment payment, CancellationToken cancellationToken);
+    void Add(Payment payment);
     Task<Payment?> GetByIdAsync(PaymentId id, CancellationToken cancellationToken);
 }

@@ -1,4 +1,5 @@
 using Domain.Payments;
+using Domain.Shared;
 using Domain.Shared.Events;
 using Infrastructure.Events;
 using Infrastructure.Persistence;
@@ -40,6 +41,8 @@ public static class DependencyInjection
                 // Plugs in every registered ISaveChangesInterceptor: adding one doesn't require changing this line
                 .AddInterceptors(serviceProvider.GetServices<ISaveChangesInterceptor>())
         );
+        // Same scoped DbContext as the repositories, so SaveChangesAsync saves what they track
+        services.AddScoped<IUnitOfWork>(serviceProvider => serviceProvider.GetRequiredService<PaymentsDbContext>());
         services.AddScoped<IPaymentRepository, PaymentRepository>();
     }
 
