@@ -15,11 +15,7 @@ public class CreatePaymentHandler(
         CancellationToken cancellationToken
     )
     {
-        Money amountDue = new()
-        {
-            Amount = command.Amount,
-            Currency = Currency.FromCode(command.CurrencyCode)
-        };
+        Money amountDue = new(command.Amount, Currency.FromCode(command.CurrencyCode));
 
         Payment payment = Payment.Create(
             amountDue,

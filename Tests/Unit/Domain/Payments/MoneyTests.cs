@@ -9,14 +9,37 @@ public class MoneyTests
     [Theory]
     [InlineData(0)]
     [InlineData(-0.0000000001)]
-    public void Money_Amount_MustBeGreaterThanZero(decimal amount)
+    public void Constructor_WithZeroOrNegativeAmount_Throws(decimal amount)
     {
         // When / Then
-        Assert.Throws<ArgumentOutOfRangeException>(() => new Money
-        {
-            Amount = amount,
-            Currency = usd
-        });
+        Assert.Throws<ArgumentOutOfRangeException>(() => new Money(amount, usd));
+    }
+
+    [Theory]
+    [InlineData("EUR", 10.255)]
+    [InlineData("JPY", 10.5)]
+    public void Constructor_WithMoreDecimalsThanCurrencyPrecision_Throws(string currencyCode, decimal amount)
+    {
+        // Given
+        var currency = Currency.FromCode(currencyCode);
+
+        // When / Then
+        Assert.Throws<ArgumentException>(() => new Money(amount, currency));
+    }
+
+    [Theory]
+    [InlineData("EUR", 10.25)]
+    [InlineData("JPY", 10)]
+    public void Constructor_WithDecimalsWithinCurrencyPrecision_SetsAmount(string currencyCode, decimal amount)
+    {
+        // Given
+        var currency = Currency.FromCode(currencyCode);
+
+        // When
+        var money = new Money(amount, currency);
+
+        // Then
+        Assert.Equal(amount, money.Amount);
     }
 
     [Theory]
@@ -25,8 +48,8 @@ public class MoneyTests
     public void GreaterOrEqualTo_WhenSmaller_ReturnsFalse(decimal value)
     {
         // Given
-        var money = new Money { Amount = value, Currency = usd };
-        var other = new Money { Amount = 1234, Currency = usd };
+        var money = new Money(value, usd);
+        var other = new Money(1234, usd);
 
         // When
         var result = money.GreaterOrEqualTo(other);
@@ -41,8 +64,8 @@ public class MoneyTests
     public void GreaterOrEqualTo_WhenEqualOrGreater_ReturnsTrue(decimal value)
     {
         // Given
-        var money = new Money { Amount = value, Currency = usd };
-        var other = new Money { Amount = 1234, Currency = usd };
+        var money = new Money(value, usd);
+        var other = new Money(1234, usd);
 
         // When
         var result = money.GreaterOrEqualTo(other);
@@ -55,8 +78,8 @@ public class MoneyTests
     public void GreaterOrEqualTo_WithDifferentCurrency_Throws()
     {
         // Given
-        var money = new Money { Amount = 1234, Currency = usd };
-        var other = new Money { Amount = 1, Currency = Currency.FromCode("BTC") };
+        var money = new Money(1234, usd);
+        var other = new Money(1, Currency.FromCode("BTC"));
 
         // When / Then
         Assert.Throws<ArgumentException>(() => money.GreaterOrEqualTo(other));

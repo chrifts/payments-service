@@ -1,18 +1,29 @@
 namespace Domain.Payments;
 
-public record Money
+public sealed record Money
 {
-    private readonly decimal _amount;
-    public decimal Amount
+    public decimal Amount { get; }
+    public Currency Currency { get; }
+
+    // Used by EF Core to materialize from the database: it can't pass Currency (a complex property) to a constructor
+    private Money()
     {
-        get => _amount;
-        init
-        {
-            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value);
-            _amount = value;
-        }
+        Currency = null!;
     }
-    public required Currency Currency { get; init; }
+
+    public Money(decimal amount, Currency currency)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(amount);
+
+        // Round, not amount.Scale: 10.00m has Scale 2 but is a valid JPY amount
+        if (decimal.Round(amount, currency.Precision) != amount)
+        {
+            throw new ArgumentException($"{currency.Code} allows at most {currency.Precision} decimals", nameof(amount));
+        }
+
+        Amount = amount;
+        Currency = currency;
+    }
 
     public bool GreaterOrEqualTo(Money money)
     {

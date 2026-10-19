@@ -14,8 +14,8 @@ public class CashPaymentTests
     public void EnsureCanPay_WhenTenderedIsLess_Throws(decimal tendered)
     {
         // Given
-        var method = new CashPayment(new Money { Amount = tendered, Currency = usd });
-        var amountDue = new Money { Amount = 1234, Currency = usd };
+        var method = new CashPayment(new Money(tendered, usd));
+        var amountDue = new Money(1234, usd);
 
         // When / Then
         Assert.Throws<InsufficientTenderedAmountException>(() => method.EnsureCanPay(amountDue));
@@ -27,8 +27,8 @@ public class CashPaymentTests
     public void EnsureCanPay_WhenTenderedIsEqualOrGreater_DoesNotThrow(decimal tendered)
     {
         // Given
-        var method = new CashPayment(new Money { Amount = tendered, Currency = usd });
-        var amountDue = new Money { Amount = 1234, Currency = usd };
+        var method = new CashPayment(new Money(tendered, usd));
+        var amountDue = new Money(1234, usd);
 
         // When
         var exception = Record.Exception(() => method.EnsureCanPay(amountDue));

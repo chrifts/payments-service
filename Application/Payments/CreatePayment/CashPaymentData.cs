@@ -7,8 +7,6 @@ public record CashPaymentData(decimal TenderedAmount) : PaymentMethodData
 {
     public override CashPayment ToDomain(Currency currency)
     {
-        return new CashPayment(
-            new Money { Amount = TenderedAmount, Currency = currency }
-        );
+        return new CashPayment(new Money(TenderedAmount, currency));
     }
 }

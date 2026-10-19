@@ -16,7 +16,7 @@ public class PaymentTests
 
     public PaymentTests()
     {
-        _money = new() { Amount = 2134, Currency = Currency.FromCode("BTC") };
+        _money = new(2134, Currency.FromCode("BTC"));
         _method = new CashPayment(_money);
         _createdAt = new(2026, 9, 26, 12, 0, 0, TimeSpan.Zero);
         _fakeTimeProvider = new FakeTimeProvider(_createdAt);
@@ -86,8 +86,8 @@ public class PaymentTests
         // Given
         Currency currency = Currency.FromCode("BTC");
 
-        Money toPay = new() { Amount = 2134, Currency = currency };
-        Money tendered = new() { Amount = 1, Currency = currency };
+        Money toPay = new(2134, currency);
+        Money tendered = new(1, currency);
 
         CashPayment method = new(tendered);
         Payment cashPayment = Payment.Create(toPay, method, _fakeTimeProvider);
