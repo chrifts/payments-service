@@ -13,11 +13,19 @@ public static class PaymentEndpoints
 
     public static IEndpointRouteBuilder MapPaymentEndpoints(this IEndpointRouteBuilder app)
     {
-        RouteGroupBuilder payments = app.MapGroup("/payments");
+        RouteGroupBuilder payments = app.MapGroup("/payments").WithTags("Payments");
 
-        payments.MapPost("", CreatePaymentAsync);
-        payments.MapGet("/{id:guid}", GetPaymentAsync).WithName(GetPaymentRoute);
-        payments.MapPost("/{id:guid}/pay", PayPaymentAsync);
+        // ProducesProblem documents the 400 that DomainExceptionHandler writes when a business rule is broken
+        payments.MapPost("", CreatePaymentAsync)
+            .WithSummary("Creates a payment")
+            .ProducesProblem(StatusCodes.Status400BadRequest);
+        payments.MapGet("/{id:guid}", GetPaymentAsync)
+            .WithName(GetPaymentRoute)
+            .WithSummary("Gets a payment by id")
+            .ProducesProblem(StatusCodes.Status400BadRequest);
+        payments.MapPost("/{id:guid}/pay", PayPaymentAsync)
+            .WithSummary("Pays a payment with its payment method")
+            .ProducesProblem(StatusCodes.Status400BadRequest);
 
         return app;
     }

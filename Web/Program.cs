@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization.Metadata;
 using Application;
 using Infrastructure;
+using Scalar.AspNetCore;
 using Serilog;
 using Web.ExceptionHandling;
 using Web.Payments;
@@ -12,6 +13,7 @@ builder.Services.AddSerilog((_, loggerConfiguration) => loggerConfiguration.Read
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 
+builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<DomainExceptionHandler>();
 builder.Services.ConfigureHttpJsonOptions(options =>
@@ -30,6 +32,13 @@ var app = builder.Build();
 
 app.UseExceptionHandler();
 app.UseStatusCodePages();
+
+// API description (/openapi/v1.json) and its interactive UI (/scalar), only in Development (local runs and the Docker demo)
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.MapScalarApiReference();
+}
 
 app.MapPaymentEndpoints();
 
