@@ -35,7 +35,7 @@ public sealed record Money
         EnsureSameCurrency(money.Currency);
         return Amount >= money.Amount;
     }
-    
+
     private void EnsureSameCurrency(Currency currency)
     {
         if (currency != Currency)

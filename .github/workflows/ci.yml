@@ -24,9 +24,16 @@ jobs:
       - name: Restore
         run: dotnet restore payments.slnx
 
+      - name: Check formatting
+        run: dotnet format payments.slnx --verify-no-changes --no-restore
+
       - name: Build
         run: dotnet build payments.slnx --no-restore
 
       # Integration tests start MySQL with Testcontainers: ubuntu-latest runners already have Docker
       - name: Test
         run: dotnet test payments.slnx --no-build
+
+      # Keeps the one-command Docker demo (docker compose --profile app up) working
+      - name: Build Docker image
+        run: docker build -f Web/Dockerfile -t payments-api .
