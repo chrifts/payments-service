@@ -1,3 +1,4 @@
+# dotnet run --project Web listens on 5039; the Docker demo (docker compose --profile app up) on 8080
 @baseUrl = http://localhost:5039
 
 ### Create a cash payment (201 + Location)

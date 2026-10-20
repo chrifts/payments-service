@@ -45,6 +45,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
+    // Whoever opens the root of the demo lands on the docs instead of a 404
+    app.MapGet("/", () => TypedResults.Redirect("/scalar")).ExcludeFromDescription();
 }
 
 app.MapPaymentEndpoints();
