@@ -4,7 +4,9 @@
 
 A small payments API built with .NET 10 to practice Clean Architecture and Domain-Driven Design: a rich `Payment` aggregate, value objects that can't hold invalid data, a unit of work over EF Core, domain events, and tests against a real MySQL.
 
-**Stack:** .NET 10 · ASP.NET Core minimal APIs · EF Core 9 (Pomelo) · MySQL 8.4 · xUnit · Testcontainers · NetArchTest · Serilog · GitHub Actions
+**Stack:** .NET 10 · ASP.NET Core minimal APIs · OpenAPI + Scalar · EF Core 9 (Pomelo) · MySQL 8.4 · xUnit · Testcontainers · NetArchTest · Serilog · Docker · GitHub Actions
+
+**Try it:** `docker compose --profile app up --build`, then open http://localhost:8080/scalar.
 
 ## What it does
 
@@ -44,7 +46,7 @@ Errors are [Problem Details (RFC 9457)](https://www.rfc-editor.org/rfc/rfc9457) 
 }
 ```
 
-More requests, including the error cases, in [`Web/payments.http`](Web/payments.http).
+In Development, the OpenAPI document is served at `/openapi/v1.json` and an interactive UI (Scalar) at `/scalar`. More requests, including the error cases, are in [`Web/payments.http`](Web/payments.http).
 
 ## Architecture
 
@@ -85,9 +87,21 @@ The dependency rule is checked by architecture tests: Domain can't reference App
 | **I** | Small ports: `IUnitOfWork` (one method), `IDomainEventPublisher` (one), `IHasDomainEvents` (two). `GetPayment` doesn't see anything that saves. |
 | **D** | Application depends on ports defined in Domain, never on EF Core, and an architecture test checks it. |
 
-## Running locally
+## Running it
 
-Prerequisites: .NET 10 SDK and Docker.
+### Quick start with Docker
+
+Only Docker is needed:
+
+```bash
+docker compose --profile app up --build
+```
+
+Then open http://localhost:8080/scalar to explore and call the API. The API container applies the database migrations on startup. Stop everything with `docker compose --profile app down` (add `-v` to also delete the database). To change the password or the host ports (3306, 8080), copy `.env.example` to `.env` and edit it.
+
+### Development setup
+
+Prerequisites: .NET 10 SDK and Docker. Plain `docker compose up -d` starts only MySQL; the API runs from your machine.
 
 1. Copy `.env.example` to `.env` and set `MYSQL_ROOT_PASSWORD` (and `MYSQL_HOST_PORT` if 3306 is taken).
 2. Start MySQL:
@@ -103,7 +117,7 @@ Prerequisites: .NET 10 SDK and Docker.
    dotnet tool restore
    dotnet ef database update --project Infrastructure --startup-project Web
    ```
-5. Run the API at `http://localhost:5039` and try the requests in `Web/payments.http`:
+5. Run the API at `http://localhost:5039` and use `/scalar` or the requests in `Web/payments.http`:
    ```bash
    dotnet run --project Web
    ```
@@ -121,7 +135,7 @@ dotnet test --filter "FullyQualifiedName~Tests.Unit"   # unit tests only, no Doc
 - **Integration:** a real MySQL 8.4 container started by Testcontainers, with the real migrations. They cover the repository round trip, domain event publishing and the HTTP flow create → pay → get through `WebApplicationFactory`.
 - **Architecture:** NetArchTest rules for the dependencies between layers.
 
-CI runs the whole suite on every push and pull request to `main`.
+On every push and pull request to `main`, CI checks the formatting (`dotnet format`), runs the whole suite and builds the Docker image.
 
 ## Roadmap
 
@@ -129,4 +143,8 @@ CI runs the whole suite on every push and pull request to `main`.
 - More payment methods: card (storing only the processor's token, never the card number), bank transfer, crypto.
 - Optimistic concurrency, so two requests can't pay the same payment at the same time.
 - A transactional outbox to deliver domain events reliably.
-- An OpenAPI document and authentication.
+- Listing payments, and authentication.
+
+## License
+
+[MIT](LICENSE)
