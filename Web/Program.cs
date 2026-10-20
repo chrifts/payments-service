@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization.Metadata;
 using Application;
 using Infrastructure;
+using Infrastructure.Persistence;
 using Scalar.AspNetCore;
 using Serilog;
 using Web.ExceptionHandling;
@@ -29,6 +30,12 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 builder.Services.Configure<RouteHandlerOptions>(options => options.ThrowOnBadRequest = false);
 
 var app = builder.Build();
+
+// Only the Docker demo turns this on; in development migrations run with `dotnet ef database update`
+if (app.Configuration.GetValue<bool>("Database:MigrateOnStartup"))
+{
+    await app.Services.MigrateDatabaseAsync();
+}
 
 app.UseExceptionHandler();
 app.UseStatusCodePages();

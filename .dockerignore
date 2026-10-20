@@ -1,0 +1,9 @@
+# Host build output would overwrite the container's restore (obj/ has host paths)
+**/bin
+**/obj
+**/logs
+**/.env
+.git
+.github
+.claude
+Tests
